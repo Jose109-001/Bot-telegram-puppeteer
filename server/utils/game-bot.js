@@ -1,5 +1,7 @@
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
+const dragAndDrop = require('./dragAndDrop');
+const path = require('path');
 
 puppeteer.use(StealthPlugin());
 
@@ -14,13 +16,23 @@ const Bot = {
     args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
   },
 
-  async init (username, password) {
+  async init (username, password, TelegramBot) {
     // Open browser
     const browser = await puppeteer.launch(this.config);
 
-    // Get tab and go to login page
+    // Get tab/page
     const [page] = await browser.pages();
+    
+    // TelegramBot, browser and page saved in this instance
+    this.TelegramBot = TelegramBot;
+    this.browser = browser;
+    this.page = page;
+
+    // Go to login page
     await page.goto("https://lobby.ikariam.gameforge.com/en_GB");
+
+    // Bot state change to initialized
+    this.state = 'initialized';
 
     // Wait for login form and click on login tab
     await page.waitForSelector("#registerForm");
@@ -32,8 +44,55 @@ const Bot = {
 
     // Submit form
     await page.click("#loginForm button.button-primary");
-    await page.waitForNavigation();
 
+    // Wait 3 seconds until checking for validation iframe
+    await wait(3);
+
+    // If game asks for a login validation, an iframe shows up
+    const iframe = await page.evaluate(() => document.querySelector('iframe'));
+
+    if (iframe) {
+      await this.initLoginValidation();
+    } else {
+      await this.loginComplete();
+    }
+  },
+
+  async initLoginValidation() {
+    const { TelegramBot } = this;
+
+    // Send messages to telegram
+    TelegramBot.sendMessage('Waiting for login validation...');
+    
+    await wait(2);
+
+    TelegramBot.sendMessage('Pick the box number to move (1 to 4)');
+
+    // Send screenshot of validation
+    const clip = {
+        x: 790,
+        y: 260,
+        width: 1125 - 790,
+        height: 820 - 260
+    };
+    const screenshotPath = path.join(__dirname, '/screenshots/login-validation.png');
+    const screenshot = await this.page.screenshot({ clip, path: screenshotPath });
+    
+    TelegramBot.sendPhoto(screenshotPath);
+
+    // Change validation state to tru
+    this.waitingForLoginValidation = true;
+  },
+
+  async passLoginValidation (boxNumber) {
+    this.waitingForLoginValidation = false;
+    await this.page.evaluate(dragAndDrop, boxNumber - 1);
+    await wait(2);
+    await this.loginComplete();
+  },
+
+  async loginComplete() {
+    // Log messages
     console.log("Login complete");
     console.log("Waiting 1 second");
 
@@ -43,16 +102,16 @@ const Bot = {
     console.log("Joining game");
 
     // Join last game
-    await page.click("#joinGame .button:nth-child(2)");
+    await this.page.click("#joinGame .button:nth-child(2)");
 
+    // Wait for navigation and get new page
     await wait(4);
-
-    const pages = await browser.pages();
+    const pages = await this.browser.pages();
     this.page = pages[1];
 
     console.log('Game joined');
-    
-    this.state = 'initialized';
+
+    this.TelegramBot.sendMessage('Bot initialized');
   },
 
   async getData () {
