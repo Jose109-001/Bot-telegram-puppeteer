@@ -2,6 +2,8 @@ module.exports = (index) => {
     const iframe = document.querySelector('iframe');
     const script = document.createElement('script');
     
+    if (!iframe) return;
+
     script.text = `(() => {
         // Get source and target elements
         var source = document.querySelector('div div div').querySelectorAll('div')[2 + ${index}];

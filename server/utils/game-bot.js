@@ -96,13 +96,11 @@ const Bot = {
     console.log("Login complete");
     console.log("Waiting 1 second");
 
-    // Wait 1 second
-    await wait(1);
+    // Join last game
+    await this.page.waitForSelector("#joinGame .button:nth-child(2)");
+    await this.page.click("#joinGame .button:nth-child(2)");
 
     console.log("Joining game");
-
-    // Join last game
-    await this.page.click("#joinGame .button:nth-child(2)");
 
     // Wait for navigation and get new page
     await wait(4);
