@@ -14,7 +14,7 @@ const botController = require('./controllers/bot-controller');
 
 // Express
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors());
