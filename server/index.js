@@ -1,5 +1,6 @@
 // env
 require('dotenv').config();
+const path = require('path');
 
 // Packages
 const express = require('express');
