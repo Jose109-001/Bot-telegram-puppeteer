@@ -2,6 +2,8 @@ const TelegramBotAPI = require('node-telegram-bot-api');
 const token = process.env.TELEGRAM_TOKEN;
 
 const TelegramBot = {
+    user: {},
+
     init (GameBot) {
         this.GameBot = GameBot;
         this.bot = new TelegramBotAPI(token, { polling: true });
@@ -22,7 +24,9 @@ const TelegramBot = {
     bindCommands () {
         const { bot } = this;
 
+        bot.on('message', this.login.bind(this));
         bot.on('message', this.loginValidation.bind(this));
+
         bot.onText(/\/init/, this.commands.init.bind(this));
         bot.onText(/\/state/, this.commands.state.bind(this));
         bot.onText(/\/data/, this.ifInitialized(this.commands.data.bind(this)));
@@ -41,6 +45,22 @@ const TelegramBot = {
         };
     },
 
+    async login (msg) {
+        if (this.waitingForUserEmail) {
+            this.waitingForUserEmail = false;
+            this.user.email = msg.text.trim();
+            this.bot.sendMessage(msg.chat.id, 'Please, type your password');
+            this.waitingForUserPassword = true;
+        }
+
+        if (this.waitingForUserPassword) {
+            this.waitingForUserPassword = false;
+            bot.sendMessage(msg.chat.id, 'Initializing bot..');
+            this.user.password = msg.text.trim();
+            await GameBot.init(this.user.email, this.user.password);
+        }
+    },
+
     async loginValidation (msg) {
         // Only if waitingForLoginValidation and message is a number
         if (this.GameBot.waitingForLoginValidation && !isNaN(msg.text)) {
@@ -55,8 +75,8 @@ const TelegramBot = {
             // Save chat id
             this.chatId = msg.chat.id;
 
-            bot.sendMessage(msg.chat.id, 'Initializing bot..');
-            await GameBot.init(process.env.EMAIL, process.env.PASSWORD, TelegramBot);
+            bot.sendMessage(this.chatId, 'Please, type your username');
+            this.waitingForUserEmail = true;
         },
 
         async state (msg) {

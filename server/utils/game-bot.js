@@ -15,17 +15,24 @@ const Bot = {
     defaultViewport: null,
     args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
   },
+
+  async getPage () {
+    // Get tab/page
+    const pages = await this.browser.pages();
+    console.log('Pages', pages.length, pages);
+    this.page = pages[pages.length - 1];
+  },
   
   async init (username, password, TelegramBot) {
-    // Open browser
-    const browser = await puppeteer.launch(this.config);
-
-    // Get tab/page
-    const [page] = await browser.pages();
-    
     // TelegramBot, browser and page saved in this instance
     this.TelegramBot = TelegramBot;
+
+    // Open browser
+    const browser = await puppeteer.launch(this.config);
     this.browser = browser;
+
+    // Get page    
+    const page = this.getPage();
     this.page = page;
 
     // Go to login page
@@ -72,8 +79,8 @@ const Bot = {
     const clip = {
         x: 790,
         y: 260,
-        width: 1125 - 790,
-        height: 820 - 260
+        width: 335,
+        height: 560
     };
     const screenshotPath = path.join(__dirname, '/screenshots/login-validation.png');
     const screenshot = await this.page.screenshot({ clip, path: screenshotPath });
@@ -104,8 +111,7 @@ const Bot = {
 
     // Wait for navigation and get new page
     await wait(4);
-    const pages = await this.browser.pages();
-    this.page = pages[1];
+    this.getPage();
 
     console.log('Game joined');
 
