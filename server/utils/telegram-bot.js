@@ -10,8 +10,18 @@ const TelegramBot = {
     init (GameBot) {
         console.log(this.user)
         this.GameBot = GameBot;
-        this.bot = new TelegramBotAPI(token, { polling: true });
+        this.bot = this.getBot();
         this.bindCommands();
+    },
+
+    getBot() {
+        if (process.env.NODE_ENV === 'production') {
+            const bot = new TelegramBot(token);
+            bot.setWebHook(process.env.HEROKU_URL + token);
+            return bot;
+        } else {
+            return new TelegramBotAPI(token, { polling: true })
+        }
     },
 
     sendMessage (msg) {

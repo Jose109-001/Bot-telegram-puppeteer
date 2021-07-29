@@ -123,13 +123,15 @@ const Bot = {
     console.log('Game joined');
 
     const url = process.env.NODE_ENV === 'production'
-      ? 'https://bot-telegram-puppeteer.herokuapp.com/'
+      ? process.env.HEROKU_URL
       : 'http://localhost:3001/';
 
     // Send message to telegram
     this.TelegramBot.sendMessage('Bot initialized');
     this.TelegramBot.sendMessage(`You can visit the admin at ${url}`);
     
+    await wait(2);
+
     // Close all popups
     await this.page.evaluate(() => {
         ikariam.getMultiPopupController().closePopup();

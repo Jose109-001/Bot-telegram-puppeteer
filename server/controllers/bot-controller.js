@@ -25,7 +25,6 @@ const getData = async (req, res) => {
   }
 
   const data =  await GameBot.getData();
-  console.log({ data });
 
   res.json(data);
 };

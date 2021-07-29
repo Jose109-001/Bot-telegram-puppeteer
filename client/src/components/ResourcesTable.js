@@ -21,11 +21,12 @@ export default function ResourcesTable({ data }) {
 
     const rows = [
         createData('Population', data.population),
-        createData('Crystal', data.crystal),
         createData('Gold', data.gold),
-        createData('Marble', data.marble),
-        createData('Sulfur', data.sulfur),
+        createData('Wood', data.wood),
         createData('Wine', data.wine),
+        createData('Marble', data.marble),
+        createData('Crystal', data.crystal),
+        createData('Sulfur', data.sulfur),
     ];
 
   return (
