@@ -2,9 +2,13 @@ const TelegramBotAPI = require('node-telegram-bot-api');
 const token = process.env.TELEGRAM_TOKEN;
 
 const TelegramBot = {
-    user: {},
+    user: {
+        username: process.env.EMAIL,
+        password: process.env.PASSWORD
+    },
 
     init (GameBot) {
+        console.log(this.user)
         this.GameBot = GameBot;
         this.bot = new TelegramBotAPI(token, { polling: true });
         this.bindCommands();
@@ -46,18 +50,17 @@ const TelegramBot = {
     },
 
     async login (msg) {
-        if (this.waitingForUserEmail) {
-            this.waitingForUserEmail = false;
-            this.user.email = msg.text.trim();
-            this.bot.sendMessage(msg.chat.id, 'Please, type your password');
-            this.waitingForUserPassword = true;
-        }
-
         if (this.waitingForUserPassword) {
             this.waitingForUserPassword = false;
-            bot.sendMessage(msg.chat.id, 'Initializing bot..');
             this.user.password = msg.text.trim();
-            await GameBot.init(this.user.email, this.user.password);
+            this.initializeBot();
+        }
+
+        if (this.waitingForUserEmail) {
+            this.waitingForUserEmail = false;
+            this.user.username = msg.text.trim();
+            this.bot.sendMessage(msg.chat.id, 'Please, type your password');
+            this.waitingForUserPassword = true;
         }
     },
 
@@ -68,15 +71,24 @@ const TelegramBot = {
         }
     },
 
+    async initializeBot () {
+        this.bot.sendMessage(this.chatId, 'Initializing bot..');
+        this.GameBot.init(this.user.username, this.user.password, this);
+    },
+
     commands: {
         async init(msg) {
-            const { GameBot, bot } = this;
+            const { GameBot, bot, user: { username, password } } = this;
             
             // Save chat id
             this.chatId = msg.chat.id;
 
-            bot.sendMessage(this.chatId, 'Please, type your username');
-            this.waitingForUserEmail = true;
+            if (username && password) {
+                this.initializeBot();
+            } else {
+                bot.sendMessage(this.chatId, 'Please, type your username');
+                this.waitingForUserEmail = true;
+            }
         },
 
         async state (msg) {

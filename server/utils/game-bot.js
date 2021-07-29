@@ -16,11 +16,16 @@ const Bot = {
     args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
   },
 
+  async getBrowser() {
+    this.browser = await puppeteer.launch(this.config);
+    return this.browser;
+  },
+
   async getPage () {
     // Get tab/page
     const pages = await this.browser.pages();
-    console.log('Pages', pages.length, pages);
     this.page = pages[pages.length - 1];
+    return this.page;
   },
   
   async init (username, password, TelegramBot) {
@@ -28,12 +33,10 @@ const Bot = {
     this.TelegramBot = TelegramBot;
 
     // Open browser
-    const browser = await puppeteer.launch(this.config);
-    this.browser = browser;
+    const browser = await this.getBrowser();
 
     // Get page    
-    const page = this.getPage();
-    this.page = page;
+    const page = await this.getPage();
 
     // Go to login page
     await page.goto("https://lobby.ikariam.gameforge.com/en_GB");
@@ -111,7 +114,7 @@ const Bot = {
 
     // Wait for navigation and get new page
     await wait(4);
-    this.getPage();
+    await this.getPage();
 
     console.log('Game joined');
 
@@ -144,8 +147,6 @@ const Bot = {
 
   async screenshot () {
     const path = __dirname + '/screenshots/screenshot.png';
-    console.log(this);
-    console.log(this.page);
     await this.page.screenshot({ path });
     return path;
   }
