@@ -11,13 +11,16 @@ const wait = async (seconds) =>
 const Bot = {
   state: 'iddle',
   config: {
-    headless: true,
-    defaultViewport: null,
-    args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
+    browser: {
+      headless: true,
+      defaultViewport: null,
+      args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
+    },
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
   },
 
   async getBrowser() {
-    this.browser = await puppeteer.launch(this.config);
+    this.browser = await puppeteer.launch(this.config.browser);
     return this.browser;
   },
 
@@ -25,6 +28,7 @@ const Bot = {
     // Get tab/page
     const pages = await this.browser.pages();
     this.page = pages[pages.length - 1];
+    await this.page.setUserAgent(this.config.userAgent);
     return this.page;
   },
   
@@ -118,7 +122,18 @@ const Bot = {
 
     console.log('Game joined');
 
+    const url = process.env.NODE_ENV === 'production'
+      ? 'https://bot-telegram-puppeteer.herokuapp.com/'
+      : 'http://localhost:3001/';
+
+    // Send message to telegram
     this.TelegramBot.sendMessage('Bot initialized');
+    this.TelegramBot.sendMessage(`You can visit the admin at ${url}`);
+    
+    // Close all popups
+    await this.page.evaluate(() => {
+        ikariam.getMultiPopupController().closePopup();
+    });
   },
 
   async getData () {

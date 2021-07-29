@@ -16,7 +16,7 @@ const Login = ({ initBot }) => {
     return (
         <>
             {/* Username */}
-            <FormControl>
+            <FormControl mr={2}>
                 <InputLabel htmlFor="username">Username</InputLabel>
                 <Input value={username} onChange={({ target }) => setUsername(target.value)} id="username" />
                 <FormHelperText>Type your Ikariam username here</FormHelperText>
