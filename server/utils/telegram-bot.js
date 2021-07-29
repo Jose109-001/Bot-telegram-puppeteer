@@ -16,7 +16,7 @@ const TelegramBot = {
 
     getBot() {
         if (process.env.NODE_ENV === 'production') {
-            const bot = new TelegramBot(token);
+            const bot = new TelegramBotAPI(token);
             bot.setWebHook(process.env.HEROKU_URL + token);
             return bot;
         } else {
@@ -115,7 +115,6 @@ const TelegramBot = {
         async screenshot (msg) {
             const { GameBot, bot } = this;
             const screenshotPath = await GameBot.screenshot();
-            console.log('screenshotPath', screenshotPath);
             bot.sendPhoto(msg.chat.id, screenshotPath);
         }
     }
