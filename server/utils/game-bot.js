@@ -15,7 +15,7 @@ const Bot = {
     defaultViewport: null,
     args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
   },
-
+  
   async init (username, password, TelegramBot) {
     // Open browser
     const browser = await puppeteer.launch(this.config);
@@ -87,7 +87,7 @@ const Bot = {
   async passLoginValidation (boxNumber) {
     this.waitingForLoginValidation = false;
     await this.page.evaluate(dragAndDrop, boxNumber - 1);
-    await wait(2);
+    await wait(3);
     await this.loginComplete();
   },
 
@@ -113,7 +113,7 @@ const Bot = {
   },
 
   async getData () {
-    return await Bot.page.evaluate(() => {
+    return await this.page.evaluate(() => {
       const getValue = (resource) => document.querySelector(`#js_GlobalMenu_${resource}`).innerText;
 
       const wood = getValue('wood');
@@ -138,6 +138,8 @@ const Bot = {
 
   async screenshot () {
     const path = __dirname + '/screenshots/screenshot.png';
+    console.log(this);
+    console.log(this.page);
     await this.page.screenshot({ path });
     return path;
   }
