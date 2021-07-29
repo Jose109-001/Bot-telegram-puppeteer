@@ -8,20 +8,20 @@ const TelegramBot = {
     },
 
     init (GameBot) {
-        console.log(this.user)
         this.GameBot = GameBot;
         this.bot = this.getBot();
         this.bindCommands();
     },
 
     getBot() {
+        const bot = new TelegramBotAPI(token, { polling: true });
+
+        // Heroku puts app to sleep after a short time; this is avoided by setting a web hook
         if (process.env.NODE_ENV === 'production') {
-            const bot = new TelegramBotAPI(token);
-            bot.setWebHook(process.env.HEROKU_URL + token);
-            return bot;
-        } else {
-            return new TelegramBotAPI(token, { polling: true })
+            bot.setWebHook(process.env.HEROKU_URL + bot.token);
         }
+
+        return bot;
     },
 
     sendMessage (msg) {
@@ -30,7 +30,6 @@ const TelegramBot = {
     },
 
     sendPhoto (path) {
-        console.log('path', path)
         if (!this.chatId) return;
         this.bot.sendPhoto(this.chatId, path);
     },
@@ -60,12 +59,14 @@ const TelegramBot = {
     },
 
     async login (msg) {
+        // Receiving password
         if (this.waitingForUserPassword) {
             this.waitingForUserPassword = false;
             this.user.password = msg.text.trim();
             this.initializeBot();
         }
 
+        // Receiving email
         if (this.waitingForUserEmail) {
             this.waitingForUserEmail = false;
             this.user.username = msg.text.trim();
