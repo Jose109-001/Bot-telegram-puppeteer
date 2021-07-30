@@ -20,7 +20,7 @@ const handleClose = () => setShow(false);
         <DialogTitle id="alert-dialog-title">You need to set up your Telegram chat first</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Please, go to <a href="https://t.me/node_express_game_bot">https://t.me/node_express_game_bot</a>
+            Please, go to <a target="_blank" href="https://t.me/node_express_game_bot">https://t.me/node_express_game_bot</a> 
             and run this command: <b>/setchatid</b> <br />
             Come back here after that and submit the form again
           </DialogContentText>

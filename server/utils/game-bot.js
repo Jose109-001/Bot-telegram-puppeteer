@@ -46,9 +46,6 @@ const Bot = {
     // Go to login page
     await page.goto("https://lobby.ikariam.gameforge.com/en_GB");
 
-    // Bot state change to initialized
-    this.state = "initialized";
-
     // Wait for login form and click on login tab
     await page.waitForSelector("#registerForm");
     await page.click(".tabsList li");
@@ -59,6 +56,9 @@ const Bot = {
 
     // Submit form
     await page.click("#loginForm button.button-primary");
+
+    // Bot state change to initialized
+    this.state = "validating-login";
 
     // Wait 3 seconds until checking for validation iframe
     await wait(3);
@@ -71,6 +71,8 @@ const Bot = {
     } else {
       await this.loginComplete();
     }
+
+    return this.state;
   },
 
   async initLoginValidation() {
@@ -113,37 +115,45 @@ const Bot = {
   },
 
   async loginComplete() {
-    // Log messages
-    console.log("Login complete");
-    console.log("Waiting 1 second");
+    this.state = 'initialized';
+    try {
+      // Log messages
+      console.log("Login complete");
+      console.log("Waiting 1 second");
 
-    // Join last game
-    await this.page.waitForSelector("#joinGame .button:nth-child(2)");
-    await this.page.click("#joinGame .button:nth-child(2)");
+      // Join last game
+      await this.page.waitForSelector("#joinGame .button:nth-child(2)");
+      await this.page.click("#joinGame .button:nth-child(2)");
 
-    console.log("Joining game");
+      console.log("Joining game");
 
-    // Wait for navigation and get new page
-    await wait(4);
-    await this.getPage();
+      // Wait for navigation and get new page
+      await wait(4);
+      await this.getPage();
 
-    console.log("Game joined");
+      console.log("Game joined");
 
-    const url =
-      process.env.NODE_ENV === "production"
-        ? process.env.HEROKU_URL
-        : "http://localhost:3001/";
+      const url =
+        process.env.NODE_ENV === "production"
+          ? process.env.HEROKU_URL
+          : "http://localhost:3001/";
 
-    // Send message to telegram
-    this.TelegramBot.sendMessage("Bot initialized");
-    this.TelegramBot.sendMessage(`You can visit the admin at ${url}`);
+      // Send message to telegram
+      this.TelegramBot.sendMessage("Bot initialized");
+      this.TelegramBot.sendMessage(`You can visit the admin at ${url}`);
 
-    await wait(4);
+      await wait(4);
 
-    // Close all popups
-    await this.page.evaluate(() => {
-      ikariam.getMultiPopupController().closePopup();
-    });
+      // Close all popups
+      await this.page.evaluate(() => {
+        if (typeof ikariam === 'undefined') return;
+
+        ikariam.getMultiPopupController().closePopup();
+      });
+    } catch (e) {
+      console.log('Error happened at loginComplete', e);
+      this.loginComplete();
+    }
   },
 
   async getData() {

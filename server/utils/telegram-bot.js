@@ -122,6 +122,7 @@ const TelegramBot = {
 
         async screenshot (msg) {
             const { GameBot, bot } = this;
+            bot.sendMessage(msg.chat.id, 'Sending screenshot, this may take a few seconds...');
             const screenshotPath = await GameBot.screenshot();
             bot.sendPhoto(msg.chat.id, screenshotPath);
         }

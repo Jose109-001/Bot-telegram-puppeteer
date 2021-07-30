@@ -22,16 +22,18 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      const { state } = await fetch('/api/bot-state').then(res => res.json());
-
-      setState(state); // iddle / initialized
-
-      if (state === 'initialized') {
-        getData();
-      }
-    })();
+    getStateAndData();
   }, []);
+
+  const getStateAndData = async () => {
+    const { state } = await fetch('/api/bot-state').then(res => res.json());
+
+    setState(state); // iddle / initialized
+
+    if (state === 'initialized') {
+      getData();
+    }
+  };
 
   const initBot = async (username, password) => {
     setState('logging-in');
@@ -50,7 +52,7 @@ function App() {
     );
 
     if (response.success) {
-      setState('initialized');
+      setState(response.state);
       getData();
     } else if (response.message === 'missing chatId') {
       setState('iddle');
@@ -90,6 +92,13 @@ function App() {
                 Initializing...
               </div>
             )}
+
+          {state === 'validating-login' && (
+            <>
+              <div>Waiting for login validation...</div>
+              <Button onClick={getStateAndData}>Click here when it is completed</Button>
+            </>
+          )}
 
           {/* Resources table */}
           {state === 'initialized' && data && (
