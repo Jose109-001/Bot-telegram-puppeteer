@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 // Components
 import Header from './components/Header';
 import Login from './components/Login';
+import LoginModal from './components/LoginModal';
 import Resources from './components/ResourcesTable';
 
 import "./App.css";
@@ -18,6 +19,7 @@ function App() {
   const [state, setState] = useState('loading');
   const [data, setData] = useState();
   const [image, setImage] = useState();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -51,7 +53,8 @@ function App() {
       setState('initialized');
       getData();
     } else if (response.message === 'missing chatId') {
-      alert('Please, go to https://t.me/node_express_game_bot and run this command: /setchatid\nCome back here after that and submit the form again');
+      setState('iddle');
+      setShowLoginModal(true);
     }
   };
 
@@ -70,6 +73,7 @@ function App() {
 
   return (
     <>
+      <LoginModal show={showLoginModal} setShow={setShowLoginModal} />
       <Header />
       <Container className="App">
         <Box m={2}>

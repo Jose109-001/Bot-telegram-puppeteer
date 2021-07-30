@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require('puppeteer-extra-plugin-stealth');
-const dragAndDrop = require('./dragAndDrop');
-const path = require('path');
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const dragAndDrop = require("./dragAndDrop");
+const path = require("path");
 
 puppeteer.use(StealthPlugin());
 
@@ -9,14 +9,15 @@ const wait = async (seconds) =>
   new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
 const Bot = {
-  state: 'iddle',
+  state: "iddle",
   config: {
     browser: {
       headless: true,
       defaultViewport: null,
-      args: ["--start-maximized", '--window-size=1920,1080', '--no-sandbox'],
+      args: ["--start-maximized", "--window-size=1920,1080", "--no-sandbox"],
     },
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36",
   },
 
   async getBrowser() {
@@ -24,29 +25,29 @@ const Bot = {
     return this.browser;
   },
 
-  async getPage () {
+  async getPage() {
     // Get tab/page
     const pages = await this.browser.pages();
     this.page = pages[pages.length - 1];
     await this.page.setUserAgent(this.config.userAgent);
     return this.page;
   },
-  
-  async init (username, password, TelegramBot) {
+
+  async init(username, password, TelegramBot) {
     // TelegramBot, browser and page saved in this instance
     this.TelegramBot = TelegramBot;
 
     // Open browser
     const browser = await this.getBrowser();
 
-    // Get page    
+    // Get page
     const page = await this.getPage();
 
     // Go to login page
     await page.goto("https://lobby.ikariam.gameforge.com/en_GB");
 
     // Bot state change to initialized
-    this.state = 'initialized';
+    this.state = "initialized";
 
     // Wait for login form and click on login tab
     await page.waitForSelector("#registerForm");
@@ -63,7 +64,7 @@ const Bot = {
     await wait(3);
 
     // If game asks for a login validation, an iframe shows up
-    const iframe = await page.evaluate(() => document.querySelector('iframe'));
+    const iframe = await page.evaluate(() => document.querySelector("iframe"));
 
     if (iframe) {
       await this.initLoginValidation();
@@ -76,29 +77,35 @@ const Bot = {
     const { TelegramBot } = this;
 
     // Send messages to telegram
-    TelegramBot.sendMessage('Waiting for login validation...');
-    
+    TelegramBot.sendMessage("Waiting for login validation...");
+
     await wait(2);
 
-    TelegramBot.sendMessage('Pick the box number to move (1 to 4)');
+    TelegramBot.sendMessage("Pick the box number to move (1 to 4)");
 
     // Send screenshot of validation
     const clip = {
-        x: 790,
-        y: 260,
-        width: 335,
-        height: 560
+      x: 790,
+      y: 260,
+      width: 335,
+      height: 560,
     };
-    const screenshotPath = path.join(__dirname, '/screenshots/login-validation.png');
-    const screenshot = await this.page.screenshot({ clip, path: screenshotPath });
-    
+    const screenshotPath = path.join(
+      __dirname,
+      "/screenshots/login-validation.png"
+    );
+    const screenshot = await this.page.screenshot({
+      clip,
+      path: screenshotPath,
+    });
+
     TelegramBot.sendPhoto(screenshotPath);
 
     // Change validation state to tru
     this.waitingForLoginValidation = true;
   },
 
-  async passLoginValidation (boxNumber) {
+  async passLoginValidation(boxNumber) {
     this.waitingForLoginValidation = false;
     await this.page.evaluate(dragAndDrop, boxNumber - 1);
     await wait(3);
@@ -120,35 +127,37 @@ const Bot = {
     await wait(4);
     await this.getPage();
 
-    console.log('Game joined');
+    console.log("Game joined");
 
-    const url = process.env.NODE_ENV === 'production'
-      ? process.env.HEROKU_URL
-      : 'http://localhost:3001/';
+    const url =
+      process.env.NODE_ENV === "production"
+        ? process.env.HEROKU_URL
+        : "http://localhost:3001/";
 
     // Send message to telegram
-    this.TelegramBot.sendMessage('Bot initialized');
+    this.TelegramBot.sendMessage("Bot initialized");
     this.TelegramBot.sendMessage(`You can visit the admin at ${url}`);
-    
-    await wait(2);
+
+    await wait(4);
 
     // Close all popups
     await this.page.evaluate(() => {
-        ikariam.getMultiPopupController().closePopup();
+      ikariam.getMultiPopupController().closePopup();
     });
   },
 
-  async getData () {
+  async getData() {
     return await this.page.evaluate(() => {
-      const getValue = (resource) => document.querySelector(`#js_GlobalMenu_${resource}`).innerText;
+      const getValue = (resource) =>
+        document.querySelector(`#js_GlobalMenu_${resource}`).innerText;
 
-      const wood = getValue('wood');
-      const wine = getValue('wine');
-      const marble = getValue('marble');
-      const crystal = getValue('crystal');
-      const sulfur = getValue('sulfur');
-      const gold = getValue('gold');
-      const population = getValue('population');
+      const wood = getValue("wood");
+      const wine = getValue("wine");
+      const marble = getValue("marble");
+      const crystal = getValue("crystal");
+      const sulfur = getValue("sulfur");
+      const gold = getValue("gold");
+      const population = getValue("population");
 
       return {
         population,
@@ -162,11 +171,11 @@ const Bot = {
     });
   },
 
-  async screenshot () {
-    const path = __dirname + '/screenshots/screenshot.png';
+  async screenshot() {
+    const path = __dirname + "/screenshots/screenshot.png";
     await this.page.screenshot({ path });
     return path;
-  }
+  },
 };
 
 module.exports = Bot;
