@@ -37,13 +37,21 @@ const TelegramBot = {
     bindCommands () {
         const { bot } = this;
 
+        // Answers to bot questions/options
         bot.on('message', this.login.bind(this));
         bot.on('message', this.loginValidation.bind(this));
+        bot.on('message', this.captcha.bind(this));
 
+        // Initial commands
         bot.onText(/\/init/, this.commands.init.bind(this));
         bot.onText(/\/state/, this.commands.state.bind(this));
         bot.onText(/\/setchatid/, this.commands.setChatId.bind(this));
+
+        // Game-ready commands
+        bot.onText(/\/stop/, this.ifInitialized(this.commands.stop.bind(this)));
+        bot.onText(/\/restart/, this.ifInitialized(this.commands.restart.bind(this)));
         bot.onText(/\/data/, this.ifInitialized(this.commands.data.bind(this)));
+        bot.onText(/\/attack/, this.ifInitialized(this.commands.attack.bind(this)));
         bot.onText(/\/screenshot/, this.ifInitialized(this.commands.screenshot.bind(this)));
     },
 
@@ -76,6 +84,13 @@ const TelegramBot = {
         }
     },
 
+    async captcha (msg) {
+        const { GameBot, bot } = this;
+        if (GameBot.waitingForCaptcha) {
+            // ...
+        }
+    },
+ 
     async loginValidation (msg) {
         // Only if waitingForLoginValidation and message is a number
         if (this.GameBot.waitingForLoginValidation && !isNaN(msg.text)) {
@@ -109,6 +124,18 @@ const TelegramBot = {
             }
         },
 
+        async stop(msg) {
+            const { GameBot, bot } = this;
+            await GameBot.stop();
+            bot.sendMessage(msg.chat.id, 'Game stopped')
+        },
+
+        async restart(msg) {
+            const { GameBot, bot } = this;
+            await GameBot.restart(this.user.username, this.user.password, this);
+            bot.sendMessage(msg.chat.id, 'Game restarted')
+        },
+
         async state (msg) {
             const { GameBot, bot } = this;
             bot.sendMessage(msg.chat.id, `State: ${GameBot.state}`);
@@ -125,6 +152,13 @@ const TelegramBot = {
             bot.sendMessage(msg.chat.id, 'Sending screenshot, this may take a few seconds...');
             const screenshotPath = await GameBot.screenshot();
             bot.sendPhoto(msg.chat.id, screenshotPath);
+        },
+
+        async attack (msg) {
+            const { GameBot, bot } = this;
+            bot.sendMessage(msg.chat.id, 'Sending attack');
+            await GameBot.attack();
+            bot.sendMessage(msg.chat.id, 'Attack sent');
         }
     }
 };

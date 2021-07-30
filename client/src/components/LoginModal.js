@@ -21,6 +21,7 @@ const handleClose = () => setShow(false);
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Please, go to <a target="_blank" href="https://t.me/node_express_game_bot">https://t.me/node_express_game_bot</a> 
+            or search for <b>@node_express_game_bot</b> in Telegram 
             and run this command: <b>/setchatid</b> <br />
             Come back here after that and submit the form again
           </DialogContentText>

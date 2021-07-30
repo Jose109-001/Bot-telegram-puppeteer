@@ -34,6 +34,8 @@ const Bot = {
   },
 
   async init(username, password, TelegramBot) {
+    if (this.state !== 'iddle') return console.log('Bot already started');
+
     // TelegramBot, browser and page saved in this instance
     this.TelegramBot = TelegramBot;
 
@@ -110,7 +112,7 @@ const Bot = {
   async passLoginValidation(boxNumber) {
     this.waitingForLoginValidation = false;
     await this.page.evaluate(dragAndDrop, boxNumber - 1);
-    await wait(3);
+    await wait(5);
     await this.loginComplete();
   },
 
@@ -179,6 +181,25 @@ const Bot = {
         sulfur,
       };
     });
+  },
+
+  async stop() {
+    await this.browser.close();
+    this.browser = null;
+    this.page = null;
+    this.state = 'iddle';
+  },
+
+  async restart(user, password, telegramBot) {
+    await this.stop();
+    await this.init(user, password, telegramBot);
+  },
+
+  async attack () {
+    const { page } = this;
+    await page.click('#js_CityPosition17Link');
+    await wait(3);
+    await page.click('#pirateCaptureBox tr:nth-child(1) .action a');
   },
 
   async screenshot() {
