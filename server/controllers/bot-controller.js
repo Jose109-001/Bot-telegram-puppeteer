@@ -2,6 +2,13 @@ const GameBot = require("../utils/game-bot");
 const TelegramBot = require('../utils/telegram-bot');
 
 const init = async (req, res) => {
+  if (!TelegramBot.chatId) {
+    return res.json({
+      success: false,
+      message: 'missing chatId'
+    });
+  }
+
   const { username, password } = req.body;
   await GameBot.init(username, password, TelegramBot);
   res.json({

@@ -42,6 +42,7 @@ const TelegramBot = {
 
         bot.onText(/\/init/, this.commands.init.bind(this));
         bot.onText(/\/state/, this.commands.state.bind(this));
+        bot.onText(/\/setchatid/, this.commands.setChatId.bind(this));
         bot.onText(/\/data/, this.ifInitialized(this.commands.data.bind(this)));
         bot.onText(/\/screenshot/, this.ifInitialized(this.commands.screenshot.bind(this)));
     },
@@ -88,6 +89,12 @@ const TelegramBot = {
     },
 
     commands: {
+        async setChatId(msg) {
+            const url = process.env.HEROKU_URL || 'http://localhost:3001/';
+            this.chatId = msg.chat.id;
+            this.bot.sendMessage(this.chatId, `Thank you, you can go back to ${url}`);
+        },
+
         async init(msg) {
             const { GameBot, bot, user: { username, password } } = this;
             

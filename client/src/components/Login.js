@@ -11,7 +11,9 @@ const Login = ({ initBot }) => {
     const [username, setUsername] = useState('josephgaspar725@gmail.com');
     const [password, setPassword] = useState('##Gasper12345678');
 
-    console.log({ username, password })
+    const onSubmit = () => {
+        initBot(username, password);
+    };
 
     return (
         <>
@@ -30,7 +32,7 @@ const Login = ({ initBot }) => {
             </FormControl>
 
             {/* Submit button */}
-            <Button onClick={() => initBot(username, password)} variant="contained" color="primary">Init bot</Button>
+            <Button onClick={onSubmit} variant="contained" color="primary">Init bot</Button>
         </>
     );
 };

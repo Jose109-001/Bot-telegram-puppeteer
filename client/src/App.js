@@ -47,8 +47,12 @@ function App() {
       res.json()
     );
 
-    setState('initialized');
-    getData();
+    if (response.success) {
+      setState('initialized');
+      getData();
+    } else if (response.message === 'missing chatId') {
+      alert('Please, go to https://t.me/node_express_game_bot and run this command: /setchatid\nCome back here after that and submit the form again');
+    }
   };
 
   const getData = async () => {

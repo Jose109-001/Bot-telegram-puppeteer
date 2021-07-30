@@ -13,9 +13,8 @@ const Header = () => {
                 <MenuIcon />
                 </IconButton>
                 <Typography variant="h6">
-                 News
+                 Telegram and Puppeteer Bot
                 </Typography>
-                <Button color="inherit">Login</Button>
             </Toolbar>
         </AppBar>
     );
