@@ -8,3 +8,5 @@ const useStyles = makeStyles({
       marginRight: '15px'
   }
 });
+
+export default useStyles;
