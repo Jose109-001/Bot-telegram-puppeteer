@@ -45,6 +45,7 @@ const TelegramBot = {
         const { bot } = this;
 
         // Answers to bot questions/options
+        bot.on('message', (msg) => console.log('Message received:', msg.text));
         bot.on('message', this.login.bind(this));
         bot.on('message', this.loginValidation.bind(this));
         bot.on('message', this.captcha.bind(this));
@@ -170,7 +171,7 @@ const TelegramBot = {
                 item = item[0].toUpperCase() + item.slice(1);
                 return `<b>${item}:</b> ${value}`;
             }).join('\n');
-            const message = `<b>Resources</b>\n---------\n${parsedData}`;
+            const message = `<b>Resources</b>\n------------------\n${parsedData}`;
             bot.sendMessage(msg.chat.id, message, this.options);
         },
 
@@ -189,6 +190,7 @@ const TelegramBot = {
             const attackInfo = await GameBot.attack();
             bot.sendMessage(msg.chat.id, 'Attack sent');
             
+            console.log('attackInfo.returnTime', attackInfo.returnTime)
             // Sends a message when attack finished
             setTimeout(() => {
                 bot.sendMessage(msg.chat.id, 'Attack has finished');

@@ -26,7 +26,7 @@ app.get('/api/get-data', botController.getData);
 app.get('/api/screenshot', botController.screenshot);
 
 // if we're in production, serve client/build as static assets
-if (true || process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   console.log('Production');
   app.use(express.static(path.join(__dirname, '../client/build')));
 }

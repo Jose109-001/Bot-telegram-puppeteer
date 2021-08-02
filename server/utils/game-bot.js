@@ -203,7 +203,7 @@ const Bot = {
     await page.click(`#pirateCaptureBox tr:nth-child(${attackLevel}) .action a`);
 
     return {
-      returnTime: levels[attackLevel]
+      returnTime: levels[attackLevel - 1]
     };
   },
 
