@@ -6,8 +6,10 @@ import {
     Button,
     FormHelperText
 } from '@material-ui/core';
+import useStyles from './styles';
 
 const Login = ({ initBot }) => {
+    const classes = useStyles();
     const [username, setUsername] = useState('josephgaspar725@gmail.com');
     const [password, setPassword] = useState('##Gasper12345678');
 
@@ -18,7 +20,7 @@ const Login = ({ initBot }) => {
     return (
         <>
             {/* Username */}
-            <FormControl mr={2}>
+            <FormControl className={classes.marginRight}>
                 <InputLabel htmlFor="username">Username</InputLabel>
                 <Input value={username} onChange={({ target }) => setUsername(target.value)} id="username" />
                 <FormHelperText>Type your Ikariam username here</FormHelperText>

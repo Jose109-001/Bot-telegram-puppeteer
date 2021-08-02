@@ -14,10 +14,12 @@ const TelegramBot = {
     },
 
     getBot() {
-        const bot = new TelegramBotAPI(token, { polling: true });
+        const production = process.env.NODE_ENV === 'production';
+        const config = !production ? { polling: true } : undefined;
+        const bot = new TelegramBotAPI(token, config);
 
         // Heroku puts app to sleep after a short time; this is avoided by setting a web hook
-        if (process.env.NODE_ENV === 'production') {
+        if (production) {
             bot.setWebHook(process.env.HEROKU_URL + bot.token);
         }
 
@@ -127,13 +129,14 @@ const TelegramBot = {
         async stop(msg) {
             const { GameBot, bot } = this;
             await GameBot.stop();
-            bot.sendMessage(msg.chat.id, 'Game stopped')
+            bot.sendMessage(msg.chat.id, 'Bot stopped')
         },
 
         async restart(msg) {
             const { GameBot, bot } = this;
+            bot.sendMessage(msg.chat.id, 'Restarting bot');
             await GameBot.restart(this.user.username, this.user.password, this);
-            bot.sendMessage(msg.chat.id, 'Game restarted')
+            bot.sendMessage(msg.chat.id, 'Bot restarted');
         },
 
         async state (msg) {
@@ -156,9 +159,16 @@ const TelegramBot = {
 
         async attack (msg) {
             const { GameBot, bot } = this;
+
+            // Send attack and 2 messages for the user
             bot.sendMessage(msg.chat.id, 'Sending attack');
-            await GameBot.attack();
+            const attackInfo = await GameBot.attack();
             bot.sendMessage(msg.chat.id, 'Attack sent');
+            
+            // Sends a message when attack finished
+            setTimeout(() => {
+                bot.sendMessage(msg.chat.id, 'Attack has finished');
+            }, attackInfo.returnTime * 60 * 1000);
         }
     }
 };

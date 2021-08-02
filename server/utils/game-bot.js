@@ -195,11 +195,16 @@ const Bot = {
     await this.init(user, password, telegramBot);
   },
 
-  async attack () {
+  async attack (attackLevel = 1) {
+    const levels = [2.5, 7.5, 15, 30];
     const { page } = this;
     await page.click('#js_CityPosition17Link');
     await wait(3);
-    await page.click('#pirateCaptureBox tr:nth-child(1) .action a');
+    await page.click(`#pirateCaptureBox tr:nth-child(${attackLevel}) .action a`);
+
+    return {
+      returnTime: levels[attackLevel]
+    };
   },
 
   async screenshot() {
