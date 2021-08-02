@@ -7,6 +7,11 @@ const TelegramBot = {
         password: process.env.PASSWORD
     },
 
+    options: {
+        parse_mode: 'HTML',
+        disable_web_page_preview: true
+    },
+
     init (GameBot) {
         this.GameBot = GameBot;
         this.bot = this.getBot();
@@ -28,7 +33,7 @@ const TelegramBot = {
 
     sendMessage (msg) {
         if (!this.chatId) return;
-        this.bot.sendMessage(this.chatId, msg);
+        this.bot.sendMessage(this.chatId, msg, this.options);
     },
 
     sendPhoto (path) {
@@ -45,7 +50,8 @@ const TelegramBot = {
         bot.on('message', this.captcha.bind(this));
 
         // Initial commands
-        bot.onText(/\/init/, this.commands.init.bind(this));
+        bot.onText(/\/init/, this.ifNotInitialized(this.commands.init.bind(this)));
+        bot.onText(/\/start/, this.ifNotInitialized(this.commands.init.bind(this)));
         bot.onText(/\/state/, this.commands.state.bind(this));
         bot.onText(/\/setchatid/, this.commands.setChatId.bind(this));
 
@@ -63,6 +69,18 @@ const TelegramBot = {
         return (msg) => {
             if (GameBot.state !== 'initialized') {
                 return bot.sendMessage(msg.chat.id, 'Bot is not initialized!');
+            }
+
+            next(msg);
+        };
+    },
+
+    ifNotInitialized (next) {
+        const { GameBot, bot } = this;
+
+        return (msg) => {
+            if (GameBot.state !== 'iddle') {
+                return bot.sendMessage(msg.chat.id, 'Bot is already initialized!');
             }
 
             next(msg);
@@ -109,7 +127,8 @@ const TelegramBot = {
         async setChatId(msg) {
             const url = process.env.HEROKU_URL || 'http://localhost:3001/';
             this.chatId = msg.chat.id;
-            this.bot.sendMessage(this.chatId, `Thank you, you can go back to ${url}`);
+            const message = `Thank you, you can go back to ${url}`;
+            this.bot.sendMessage(this.chatId, message, this.options);
         },
 
         async init(msg) {
@@ -147,7 +166,12 @@ const TelegramBot = {
         async data (msg) {
             const { GameBot, bot } = this;
             const data = await GameBot.getData();
-            bot.sendMessage(msg.chat.id, JSON.stringify(data, null, 4));
+            const parsedData = Object.entries(data).map(([item, value]) => {
+                item = item[0].toUpperCase() + item.slice(1);
+                return `<b>${item}:</b> ${value}`;
+            }).join('\n');
+            const message = `<b>Resources</b>\n---------\n${parsedData}`;
+            bot.sendMessage(msg.chat.id, message, this.options);
         },
 
         async screenshot (msg) {
