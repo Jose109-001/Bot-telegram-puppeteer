@@ -21,10 +21,13 @@ const TelegramBot = {
   getBot() {
     const production = process.env.NODE_ENV === "production";
     const config = !production ? { polling: true } : undefined;
+    console.log("production", production);
+    console.log("token", token);
     const bot = new TelegramBotAPI(token, config);
 
     // Heroku puts app to sleep after a short time; this is avoided by setting a web hook
     if (production) {
+      console.log("hook", process.env.HEROKU_URL + bot.token);
       bot.setWebHook(process.env.HEROKU_URL + bot.token);
     }
 
