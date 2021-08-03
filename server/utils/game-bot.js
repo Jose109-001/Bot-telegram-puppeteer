@@ -33,11 +33,8 @@ const Bot = {
     return this.page;
   },
 
-  async init(username, password, TelegramBot) {
-    if (this.state !== 'iddle') return console.log('Bot already started');
-
-    // TelegramBot, browser and page saved in this instance
-    this.TelegramBot = TelegramBot;
+  async init(username, password) {
+    if (this.state !== "iddle") return console.log("Bot already started");
 
     // Open browser
     const browser = await this.getBrowser();
@@ -59,33 +56,32 @@ const Bot = {
     // Submit form
     await page.click("#loginForm button.button-primary");
 
-    // Bot state change to initialized
-    this.state = "validating-login";
-
     // Wait 3 seconds until checking for validation iframe
     await wait(3);
 
     // If game asks for a login validation, an iframe shows up
     const iframe = await page.evaluate(() => document.querySelector("iframe"));
 
+    let response;
+
     if (iframe) {
-      await this.initLoginValidation();
+      response = await this.initLoginValidation();
     } else {
-      await this.loginComplete();
+      response = await this.loginComplete();
     }
 
-    return this.state;
+    return {
+      state: this.state,
+      ...(response || {}),
+    };
+  },
+
+  setOnLoginValidation(fn) {
+    this.onLoginValidation = fn;
   },
 
   async initLoginValidation() {
-    const { TelegramBot } = this;
-
-    // Send messages to telegram
-    TelegramBot.sendMessage("Waiting for login validation...");
-
-    await wait(2);
-
-    TelegramBot.sendMessage("Pick the box number to move (1 to 4)");
+    this.state = "validating-login";
 
     // Send screenshot of validation
     const clip = {
@@ -94,30 +90,37 @@ const Bot = {
       width: 335,
       height: 560,
     };
+
+    // Get screenshot path
     const screenshotPath = path.join(
       __dirname,
       "/screenshots/login-validation.png"
     );
-    const screenshot = await this.page.screenshot({
+
+    // Take a screenshot and save it
+    await this.page.screenshot({
       clip,
       path: screenshotPath,
     });
 
-    TelegramBot.sendPhoto(screenshotPath);
-
-    // Change validation state to tru
+    // Change validation state to true
     this.waitingForLoginValidation = true;
+
+    return {
+      screenshotPath,
+    };
   },
 
   async passLoginValidation(boxNumber) {
     this.waitingForLoginValidation = false;
     await this.page.evaluate(dragAndDrop, boxNumber - 1);
     await wait(5);
-    await this.loginComplete();
+    return await this.loginComplete();
   },
 
   async loginComplete() {
-    this.state = 'initialized';
+    this.state = "initialized";
+
     try {
       // Log messages
       console.log("Login complete");
@@ -133,29 +136,23 @@ const Bot = {
       await wait(4);
       await this.getPage();
 
+      this.closePopUps();
+
       console.log("Game joined");
-
-      const url =
-        process.env.NODE_ENV === "production"
-          ? process.env.HEROKU_URL
-          : "http://localhost:3001/";
-
-      // Send message to telegram
-      this.TelegramBot.sendMessage("Bot initialized");
-      this.TelegramBot.sendMessage(`You can visit the admin at ${url}`);
-
-      await wait(4);
-
-      // Close all popups
-      await this.page.evaluate(() => {
-        if (typeof ikariam === 'undefined') return;
-
-        ikariam.getMultiPopupController().closePopup();
-      });
     } catch (e) {
-      console.log('Error happened at loginComplete', e);
-      this.loginComplete();
+      console.log("Error happened at loginComplete", e);
+      return await this.loginComplete();
     }
+  },
+
+  async closePopUps() {
+    await wait(4);
+
+    // Close all popups
+    await this.page.evaluate(() => {
+      if (typeof ikariam === "undefined") return;
+      ikariam.getMultiPopupController().closePopup();
+    });
   },
 
   async getData() {
@@ -187,7 +184,7 @@ const Bot = {
     await this.browser.close();
     this.browser = null;
     this.page = null;
-    this.state = 'iddle';
+    this.state = "iddle";
   },
 
   async restart(user, password, telegramBot) {
@@ -195,15 +192,17 @@ const Bot = {
     await this.init(user, password, telegramBot);
   },
 
-  async attack (attackLevel = 1) {
+  async attack(attackLevel = 1) {
     const levels = [2.5, 7.5, 15, 30];
     const { page } = this;
-    await page.click('#js_CityPosition17Link');
+    await page.click("#js_CityPosition17Link");
     await wait(3);
-    await page.click(`#pirateCaptureBox tr:nth-child(${attackLevel}) .action a`);
+    await page.click(
+      `#pirateCaptureBox tr:nth-child(${attackLevel}) .action a`
+    );
 
     return {
-      returnTime: levels[attackLevel - 1]
+      returnTime: levels[attackLevel - 1],
     };
   },
 
