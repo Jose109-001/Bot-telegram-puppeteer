@@ -114,10 +114,7 @@ function App() {
             <div>
               <img src={loginValidationImage} />
               <h5>Please select the valid option:</h5>
-              <span onClick={() => validateLogin(1)}>1</span>
-              <span onClick={() => validateLogin(2)}>2</span>
-              <span onClick={() => validateLogin(3)}>3</span>
-              <span onClick={() => validateLogin(4)}>4</span>
+              {[1,2,3,4].map(n => <span onClick={() => validateLogin(n)}>{n}</span>)}
             </div>
           )}
 

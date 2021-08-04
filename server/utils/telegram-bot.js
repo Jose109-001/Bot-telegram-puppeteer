@@ -25,6 +25,12 @@ const TelegramBot = {
       bot = new TelegramBotAPI(process.env.TELEGRAM_TOKEN);
       bot.setWebHook(process.env.HEROKU_URL + bot.token);
       console.log('Hook', process.env.HEROKU_URL + bot.token);
+
+      const testBot = new TelegramBotAPI('1810279763:AAExCJqulawaZx-HxnIBmvYJvF8LlMORSkU', { polling: true });
+      testBot.on('message', (msg) => {
+        console.log('Message received', msg.text);
+        testBot.sendMessage(msg.chat.id, 'Message received');
+      })
     } else {
       bot = new TelegramBotAPI(process.env.TELEGRAM_TOKEN_DEV, { polling: true });
     }
