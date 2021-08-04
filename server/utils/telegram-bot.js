@@ -18,16 +18,16 @@ const TelegramBot = {
   },
 
   getBot() {
+    let bot;
     const production = process.env.NODE_ENV === "production";
-    const token = production ? process.env.TELEGRAM_TOKEN : process.env.TELEGRAM_TOKEN_DEV;
-    const config = !production ? { polling: true } : undefined;
-    const bot = new TelegramBotAPI(token, config);
 
     // Heroku puts app to sleep after a short time; this is avoided by setting a web hook
     if (production) {
-      const hook = process.env.HEROKU_URL + token;
-      console.log("hook", hook);
-      bot.setWebHook(hook);
+      bot = new TelegramBotAPI(process.env.TELEGRAM_TOKEN);
+      bot.setWebHook(process.env.HEROKU_URL + bot.token);
+      console.log('Hook', process.env.HEROKU_URL + bot.token);
+    } else {
+      bot = new TelegramBotAPI(process.env.TELEGRAM_TOKEN_DEV, { polling: true });
     }
 
     return bot;
