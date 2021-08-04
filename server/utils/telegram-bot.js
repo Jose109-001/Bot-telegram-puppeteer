@@ -19,10 +19,9 @@ const TelegramBot = {
 
   getBot() {
     let bot;
-    const production = process.env.NODE_ENV === "production";
 
     // Heroku puts app to sleep after a short time; this is avoided by setting a web hook
-    if (production) {
+    if (process.env.NODE_ENV === "production") {
       bot = new TelegramBotAPI(process.env.TELEGRAM_TOKEN);
       bot.setWebHook(process.env.HEROKU_URL + bot.token);
       console.log('Hook', process.env.HEROKU_URL + bot.token);
@@ -76,7 +75,7 @@ const TelegramBot = {
     const { GameBot, bot } = this;
 
     return (msg) => {
-      if (GameBot.state !== "initialized") {
+      if (GameBot.state === "iddle") {
         return bot.sendMessage(msg.chat.id, "Bot is not initialized!");
       }
 

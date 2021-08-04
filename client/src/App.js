@@ -28,14 +28,6 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginValidationImage, setLoginValidationImage] = useState();
 
-  useEffect(getState, []);
-
-  useEffect(() => {
-    if (state === "initialized") {
-      getData();
-    }
-  }, [state]);
-
   const getState = async () => {
     const { state } = await fetch("/api/bot-state").then((res) => res.json());
     setState(state);
@@ -52,15 +44,15 @@ function App() {
       try {
         const response = await res.json();
 
-        if (response.success) {
-          setState(response.state);
+        setState(response.state);
+
+        if (response.state === 'validating-login') {
+          const response = await fetch('/api/get-login-screenshot').then(res => res.blob());
+          const image = URL.createObjectURL(response);
+          setLoginValidationImage(image);
         }
       } catch (e) {
-        const response = await res.blob();
-
-        const image = URL.createObjectURL(response);
-        setLoginValidationImage(image);
-        setState("validating-login");
+        
       }
     });
   };
@@ -90,7 +82,15 @@ function App() {
     setState(response.state);
   };
 
-  console.log({ state, data, image });
+  useEffect(getState, []);
+
+  useEffect(() => {
+    if (state === "initialized") {
+      getData();
+    }
+  }, [state]);
+  
+  console.log({ state, data, image, loginValidationImage });
 
   return (
     <>
@@ -107,16 +107,6 @@ function App() {
               <CircularProgress />
               Initializing...
             </div>
-          )}
-
-          {/* Login validation */}
-          {state === "validating-login" && (
-            <>
-              <div>Waiting for login validation...</div>
-              <Button onClick={getState}>
-                Click here when it is completed
-              </Button>
-            </>
           )}
 
           {/* Login validation */}

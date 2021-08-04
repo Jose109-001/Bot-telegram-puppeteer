@@ -60,9 +60,11 @@ const Bot = {
     await wait(3);
 
     // If game asks for a login validation, an iframe shows up
-    const iframe = await page.evaluate(() => document.querySelector("iframe"));
+    const iframe = await page.evaluate(() => Boolean(document.querySelector("iframe")));
 
     let response;
+
+    console.log({iframe})
 
     if (iframe) {
       response = await this.initLoginValidation();
@@ -82,7 +84,7 @@ const Bot = {
 
   async initLoginValidation() {
     this.state = "validating-login";
-
+    
     // Send screenshot of validation
     const clip = {
       x: 790,
@@ -97,7 +99,8 @@ const Bot = {
       "/screenshots/login-validation.png"
     );
 
-    // Take a screenshot and save it
+    // Wait 2 seconds and take a screenshot and save it
+    await wait(3);
     await this.page.screenshot({
       clip,
       path: screenshotPath,
@@ -158,7 +161,7 @@ const Bot = {
   async getData() {
     return await this.page.evaluate(() => {
       const getValue = (resource) =>
-        document.querySelector(`#js_GlobalMenu_${resource}`).innerText;
+        document.querySelector(`#js_GlobalMenu_${resource}`)?.innerText;
 
       const wood = getValue("wood");
       const wine = getValue("wine");

@@ -1,19 +1,24 @@
 const GameBot = require("../utils/game-bot");
+const path = require("path");
 
 // Init game
 const init = async (req, res) => {
   const { username, password } = req.body;
   const { state, ...data } = await GameBot.init(username, password);
 
-  if (state === "validating-login") {
-    res.sendFile(data.screenshotPath);
-  } else {
-    res.json({
-      success: true,
-      state,
-      ...data,
-    });
-  }
+  console.log({ state, ...data })
+
+  res.json({
+    success: true,
+    state,
+  });
+};
+
+const getLoginScreenshot = (req, res) => {
+  res.sendFile(path.join(
+    __dirname,
+    "../utils/screenshots/login-validation.png"
+  ));
 };
 
 // Get current game state
@@ -74,4 +79,5 @@ module.exports = {
   getData,
   screenshot,
   validateLogin,
+  getLoginScreenshot
 };

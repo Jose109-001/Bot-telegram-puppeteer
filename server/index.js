@@ -26,6 +26,7 @@ app.get("/api/bot-state", botController.state);
 app.get("/api/get-data", botController.getData);
 app.get("/api/screenshot", botController.screenshot);
 app.get("/api/attack", botController.attack);
+app.get("/api/get-login-screenshot", botController.getLoginScreenshot);
 
 // if we're in production, serve client/build as static assets
 if (true || process.env.NODE_ENV === "production") {
