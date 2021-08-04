@@ -82,6 +82,44 @@ function App() {
     setState(response.state);
   };
 
+  const Dashboard = () => (
+    <>
+      <Resources data={data} />
+      <Box m={2}>
+        <Button
+          onClick={takeScreenshot}
+          variant="contained"
+          color="primary"
+        >
+          {image ? "Take another screenshot" : "Take screenshot"}
+        </Button>
+        <Button
+          onClick={sendAttack}
+          variant="contained"
+          color="primary"
+        >
+          Send attack
+        </Button>
+        {image && <img src={image} />}
+      </Box>
+    </>
+  );
+
+  const Loading = () => (
+    <div>
+      <CircularProgress />
+      Initializing...
+    </div>
+  );
+
+  const LoginValidation = () => (
+    <div>
+      <img src={loginValidationImage} />
+      <h5>Please select the valid option:</h5>
+      {[1,2,3,4].map(n => <span onClick={() => validateLogin(n)}>{n}</span>)}
+    </div>
+  )
+
   useEffect(getState, []);
 
   useEffect(() => {
@@ -94,7 +132,6 @@ function App() {
 
   return (
     <>
-      <LoginModal show={showLoginModal} setShow={setShowLoginModal} />
       <Header />
       <Container className="App">
         <Box m={2}>
@@ -102,47 +139,16 @@ function App() {
           {state === "iddle" && <Login initBot={initBot} />}
 
           {/* Loading message  */}
-          {state === "logging-in" && (
-            <div>
-              <CircularProgress />
-              Initializing...
-            </div>
-          )}
+          {state === "logging-in" && <Loading />}
 
           {/* Login validation */}
-          {loginValidationImage && (
-            <div>
-              <img src={loginValidationImage} />
-              <h5>Please select the valid option:</h5>
-              {[1,2,3,4].map(n => <span onClick={() => validateLogin(n)}>{n}</span>)}
-            </div>
-          )}
+          {state === 'validating-login' && loginValidationImage && <LoginValidation />}
 
           {/* Resources table */}
-          {state === "initialized" && data && (
-            <>
-              <Resources data={data} />
-              <Box m={2}>
-                <Button
-                  onClick={takeScreenshot}
-                  variant="contained"
-                  color="primary"
-                >
-                  {image ? "Take another screenshot" : "Take screenshot"}
-                </Button>
-                <Button
-                  onClick={sendAttack}
-                  variant="contained"
-                  color="primary"
-                >
-                  Send attack
-                </Button>
-                {image && <img src={image} />}
-              </Box>
-            </>
-          )}
+          {state === "initialized" && data && <Dashboard />}
         </Box>
       </Container>
+      <LoginModal show={showLoginModal} setShow={setShowLoginModal} />
     </>
   );
 }
