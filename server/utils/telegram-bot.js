@@ -1,5 +1,4 @@
 const TelegramBotAPI = require("node-telegram-bot-api");
-const token = process.env.TELEGRAM_TOKEN;
 
 const TelegramBot = {
   user: {
@@ -20,15 +19,15 @@ const TelegramBot = {
 
   getBot() {
     const production = process.env.NODE_ENV === "production";
+    const token = production ? process.env.TELEGRAM_TOKEN : process.env.TELEGRAM_TOKEN_DEV;
     const config = !production ? { polling: true } : undefined;
-    console.log("production", production);
-    console.log("token", token);
     const bot = new TelegramBotAPI(token, config);
 
     // Heroku puts app to sleep after a short time; this is avoided by setting a web hook
     if (production) {
-      console.log("hook", process.env.HEROKU_URL + bot.token);
-      bot.setWebHook(process.env.HEROKU_URL + bot.token);
+      const hook = process.env.HEROKU_URL + token;
+      console.log("hook", hook);
+      bot.setWebHook(hook);
     }
 
     return bot;
