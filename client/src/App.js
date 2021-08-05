@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+
 // Material
 import { CircularProgress } from "@material-ui/core/";
 import Container from "@material-ui/core/Container";
@@ -118,7 +119,7 @@ function App() {
       <h5>Please select the valid option:</h5>
       {[1,2,3,4].map(n => <span onClick={() => validateLogin(n)}>{n}</span>)}
     </div>
-  )
+  );
 
   useEffect(getState, []);
 
