@@ -12,7 +12,10 @@ const jwt = require('./utils/jwt');
 const errorHandler = require('./utils/error-handler');
 const GameBot = require("./utils/game-bot");
 const TelegramBot = require("./utils/telegram-bot");
-const botController = require("./controllers/bot.controller");
+
+// Routes
+const apiRoutes = require('./routes/api');
+const usersRoutes = require('./controllers/users.controller');
 
 // Express
 const app = express();
@@ -27,17 +30,9 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(cors());
 }
 
-// Endpoints
-app.get("/api/attack", botController.attack);
-app.post("/api/init-bot", botController.init);
-app.get("/api/bot-state", botController.state);
-app.get("/api/get-data", botController.getData);
-app.get("/api/screenshot", botController.screenshot);
-app.post("/api/validate-login", botController.validateLogin);
-app.get("/api/get-login-screenshot", botController.getLoginScreenshot);
-
 // User login endpoints
-app.use('/users', require('./controllers/users.controller'));
+app.use('/api', apiRoutes);
+app.use('/users', usersRoutes);
 
 // if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === "production") {

@@ -14,6 +14,13 @@ const init = async (req, res) => {
   });
 };
 
+const stop = async (req, res) => {
+  await GameBot.stop();
+  res.json({
+    success: true
+  });
+};
+
 const getLoginScreenshot = (req, res) => {
   res.sendFile(path.join(
     __dirname,
@@ -74,6 +81,7 @@ const validateLogin = async (req, res) => {
 
 module.exports = {
   init,
+  stop,
   state,
   attack,
   getData,

@@ -7,8 +7,10 @@ img {
     padding: 10px;
     border: 1px solid #999;
     box-sizing: border-box;
+    margin-top: 10px;
 }
 
+table svg,
 button {
     margin-right: 10px !important;
 }

@@ -56,19 +56,23 @@ const Bot = {
     // Submit form
     await page.click("#loginForm button.button-primary");
 
-    // Wait 2 seconds until checking for validation iframe
+    // Wait 3 seconds until checking for validation iframe
     await wait(2);
 
     // If game asks for a login validation, an iframe shows up
-    const joinGame = await page.evaluate(() => Boolean(document.querySelector("#joinGame")));
+    let joinGame = await page.evaluate(() => Boolean(document.querySelector("#joinGame")));
 
-    let response;
+    console.log({joinGame})
 
     if (!joinGame) {
-      response = await this.initLoginValidation();
-    } else {
-      response = await this.loginComplete();
+        await wait(2);
+        joinGame = await page.evaluate(() => Boolean(document.querySelector("#joinGame")));
+        console.log({joinGame})
     }
+
+    const response = joinGame
+      ? await this.loginComplete()
+      : await this.initLoginValidation();
 
     return {
       state: this.state,
@@ -133,8 +137,9 @@ const Bot = {
       console.log("Waiting 1 second");
 
       // Join last game
-      await this.page.waitForSelector("#joinGame .button:nth-child(2)");
-      await this.page.click("#joinGame .button:nth-child(2)");
+      const joinGameButton = "#joinGame .button:nth-child(2)";
+      await this.page.waitForSelector(joinGameButton);
+      await this.page.click(joinGameButton);
 
       console.log("Joining game");
 
@@ -152,13 +157,17 @@ const Bot = {
   },
 
   async closePopUps() {
-    await wait(4);
+    try {
+      await wait(4);
 
-    // Close all popups
-    await this.page.evaluate(() => {
-      if (typeof ikariam === "undefined") return;
-      ikariam.getMultiPopupController().closePopup();
-    });
+      // Close all popups
+      await this.page.evaluate(() => {
+        if (typeof ikariam === "undefined") return;
+        ikariam.getMultiPopupController().closePopup();
+      });
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   async getData() {

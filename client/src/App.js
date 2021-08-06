@@ -62,9 +62,15 @@ function App() {
   };
 
   const takeScreenshot = async () => {
+    setImage(null);
     const response = await fetch("/api/screenshot").then((res) => res.blob());
     const image = URL.createObjectURL(response);
     setImage(image);
+  };
+
+  const stop = async () => {
+    const response = await fetch('/api/stop').then(res => res.json());
+    setState('iddle');
   };
 
   const sendAttack = async () => {
@@ -95,8 +101,9 @@ function App() {
           onClick={takeScreenshot}
           variant="contained"
           color="primary"
+          disabled={image === null}
         >
-          {image ? "Take another screenshot" : "Take screenshot"}
+          {image ? "Take another screenshot" : image === null ? "Wait..." : "Take screenshot"}
         </Button>
         <Button
           onClick={sendAttack}
@@ -105,12 +112,19 @@ function App() {
         >
           Send attack
         </Button>
+        <Button
+          onClick={stop}
+          variant="contained"
+          color="secondary"
+        >
+          Stop
+        </Button>
         {image && <img src={image} />}
       </Box>
     </>
   );
 
-  const Loading = () => <CircularProgress />;
+  const Loading = () => <div><CircularProgress /></div>;
 
   const LoginValidation = ({ screenshot }) => (
     <div>

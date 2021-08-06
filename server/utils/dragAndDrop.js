@@ -7,8 +7,8 @@ module.exports = (index) => {
 
         script.text = `(() => {
             // Get source and target elements
-            var source = document.querySelector('div div div').querySelectorAll('div')[2 + ${index}];
-            var target = document.querySelector('div div div').querySelectorAll('div')[6];
+            let source = document.querySelector('div div div').querySelectorAll('div')[2 + ${index}];
+            let target = document.querySelector('div div div').querySelectorAll('div')[6];
             source.style.background = 'blue';
             target.style.background = 'black';
         
@@ -70,7 +70,6 @@ module.exports = (index) => {
         let success = false;
         iframes.forEach(iframe => {
             if (!iframe.contentDocument) return;
-            
             // Inject script inside of validation iframe
             iframe.contentDocument.body.appendChild(script);
             success = true;
