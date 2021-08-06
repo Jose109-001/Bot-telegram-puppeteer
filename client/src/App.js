@@ -104,18 +104,13 @@ function App() {
     </>
   );
 
-  const Loading = () => (
-    <div>
-      <CircularProgress />
-      Initializing...
-    </div>
-  );
+  const Loading = () => <CircularProgress />;
 
   const LoginValidation = () => (
     <div>
       <img src={loginValidationImage} />
       <h5>Please select the valid option:</h5>
-      {[1,2,3,4].map(n => <span onClick={() => validateLogin(n)}>{n}</span>)}
+      {[1,2,3,4].map(n => <Button variant="contained" color="primary" onClick={() => validateLogin(n)}>{n}</Button>)}
     </div>
   );
 
@@ -141,7 +136,7 @@ function App() {
           {state === "logging-in" && <Loading />}
 
           {/* Login validation */}
-          {state === 'validating-login' && loginValidationImage && <LoginValidation />}
+          {/*state === 'validating-login' && loginValidationImage &&*/ <LoginValidation />}
 
           {/* Resources table */}
           {state === "initialized" && data && <Dashboard />}

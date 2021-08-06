@@ -8,3 +8,7 @@ img {
     border: 1px solid #999;
     box-sizing: border-box;
 }
+
+button {
+    margin-right: 10px !important;
+}

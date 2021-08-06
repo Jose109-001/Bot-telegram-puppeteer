@@ -56,17 +56,15 @@ const Bot = {
     // Submit form
     await page.click("#loginForm button.button-primary");
 
-    // Wait 3 seconds until checking for validation iframe
-    await wait(3);
+    // Wait 2 seconds until checking for validation iframe
+    await wait(2);
 
     // If game asks for a login validation, an iframe shows up
-    const iframe = await page.evaluate(() => Boolean(document.querySelector("iframe")));
+    const joinGame = await page.evaluate(() => Boolean(document.querySelector("#joinGame")));
 
     let response;
 
-    console.log({iframe})
-
-    if (iframe) {
+    if (!joinGame) {
       response = await this.initLoginValidation();
     } else {
       response = await this.loginComplete();
