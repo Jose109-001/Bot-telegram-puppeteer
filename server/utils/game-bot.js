@@ -189,6 +189,12 @@ const Bot = {
     this.page = null;
     this.state = "iddle";
   },
+  
+  async pause() {
+    await this.page.close();
+    await this.getPage();
+    this.state = "iddle";
+  },
 
   async restart(user, password, telegramBot) {
     await this.stop();

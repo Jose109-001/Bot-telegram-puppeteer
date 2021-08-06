@@ -29,33 +29,31 @@ function App() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginValidationImage, setLoginValidationImage] = useState();
 
+  const handleResponseState = async (res) => {
+    const response = await res.json();
+
+    setState(response.state);
+
+    if (response.state === 'validating-login') {
+      const response = await fetch('/api/get-login-screenshot').then(res => res.blob());
+      const image = URL.createObjectURL(response);
+      setLoginValidationImage(image);
+    }
+  };
+
   const getState = async () => {
-    const { state } = await fetch("/api/bot-state").then((res) => res.json());
-    setState(state);
+    await fetch("/api/bot-state").then(handleResponseState);
   };
 
   const initBot = async (username, password) => {
     setState("logging-in");
+
     const options = getPostConfig({
       username,
       password,
     });
 
-    fetch("/api/init-bot", options).then(async (res) => {
-      try {
-        const response = await res.json();
-
-        setState(response.state);
-
-        if (response.state === 'validating-login') {
-          const response = await fetch('/api/get-login-screenshot').then(res => res.blob());
-          const image = URL.createObjectURL(response);
-          setLoginValidationImage(image);
-        }
-      } catch (e) {
-        
-      }
-    });
+    fetch("/api/init-bot", options).then(handleResponseState);
   };
 
   const getData = async () => {
@@ -129,7 +127,7 @@ function App() {
     }
   }, [state]);
   
-  console.log({ state, data, image, loginValidationImage });
+  console.log({ state, data, image });
 
   return (
     <>
