@@ -113,10 +113,15 @@ const Bot = {
   },
 
   async passLoginValidation(boxNumber) {
-    this.waitingForLoginValidation = false;
-    await this.page.evaluate(dragAndDrop, boxNumber - 1);
-    await wait(5);
-    return await this.loginComplete();
+    const selectSuccess = await this.page.evaluate(dragAndDrop, boxNumber - 1);
+
+    if (selectSuccess) {
+      this.waitingForLoginValidation = false;
+      await wait(4);
+      await this.loginComplete();
+    }
+    
+    return selectSuccess;
   },
 
   async loginComplete() {

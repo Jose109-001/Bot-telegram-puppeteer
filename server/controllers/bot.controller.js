@@ -60,9 +60,9 @@ const validateLogin = async (req, res) => {
   const { box } = req.body;
 
   if (GameBot.waitingForLoginValidation) {
-    await GameBot.passLoginValidation(box);
+    const success = await GameBot.passLoginValidation(box);
     res.json({
-      success: true,
+      success,
       state: GameBot.state,
     });
   } else {

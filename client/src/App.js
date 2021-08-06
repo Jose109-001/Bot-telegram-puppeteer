@@ -78,8 +78,13 @@ function App() {
     const response = await fetch("/api/validate-login", options).then((res) =>
       res.json()
     );
-    setLoginValidationImage(null);
-    setState(response.state);
+    if (response.success) {
+      setLoginValidationImage(null);
+      setState(response.state);
+    } else {
+      setState('validating-login');
+      alert('Validation failed');
+    }
   };
 
   const Dashboard = () => (
@@ -110,7 +115,6 @@ function App() {
   const LoginValidation = ({ screenshot }) => (
     <div>
       <img src={screenshot} />
-      <h5>Please select the valid option:</h5>
       {[1,2,3,4].map(n =>
         <Button variant="contained" color="primary" onClick={() => validateLogin(n)}>{n}</Button>
       )}

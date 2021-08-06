@@ -121,7 +121,9 @@ const TelegramBot = {
   async loginValidation(msg) {
     // Only if waitingForLoginValidation and message is a number
     if (this.GameBot.waitingForLoginValidation && !isNaN(msg.text)) {
-      await this.GameBot.passLoginValidation(msg.text);
+      if (!await this.GameBot.passLoginValidation(msg.text)) {
+        this.bot.sendMessage(msg.chat.id, 'There was an error with the validation');
+      }
     }
   },
 
