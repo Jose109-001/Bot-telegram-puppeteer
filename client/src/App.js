@@ -46,7 +46,7 @@ function App() {
   };
 
   const initBot = async (username, password) => {
-    setState("logging-in");
+    setState("loading");
 
     const options = getPostConfig({
       username,
@@ -73,6 +73,7 @@ function App() {
   };
 
   const validateLogin = async (box) => {
+    setState('loading');
     const options = getPostConfig({ box });
     const response = await fetch("/api/validate-login", options).then((res) =>
       res.json()
@@ -106,11 +107,13 @@ function App() {
 
   const Loading = () => <CircularProgress />;
 
-  const LoginValidation = () => (
+  const LoginValidation = ({ screenshot }) => (
     <div>
-      <img src={loginValidationImage} />
+      <img src={screenshot} />
       <h5>Please select the valid option:</h5>
-      {[1,2,3,4].map(n => <Button variant="contained" color="primary" onClick={() => validateLogin(n)}>{n}</Button>)}
+      {[1,2,3,4].map(n =>
+        <Button variant="contained" color="primary" onClick={() => validateLogin(n)}>{n}</Button>
+      )}
     </div>
   );
 
@@ -130,16 +133,24 @@ function App() {
       <Container className="App">
         <Box m={2}>
           {/* Init button */}
-          {state === "iddle" && <Login initBot={initBot} />}
+          {state === "iddle" &&
+            <Login initBot={initBot} />
+          }
 
           {/* Loading message  */}
-          {state === "logging-in" && <Loading />}
+          {state === "loading" &&
+            <Loading />
+          }
 
           {/* Login validation */}
-          {/*state === 'validating-login' && loginValidationImage &&*/ <LoginValidation />}
+          {state === 'validating-login' && loginValidationImage &&
+            <LoginValidation screenshot={loginValidationImage} />
+          }
 
           {/* Resources table */}
-          {state === "initialized" && data && <Dashboard />}
+          {state === "initialized" && data &&
+            <Dashboard />
+          }
         </Box>
       </Container>
       <LoginModal show={showLoginModal} setShow={setShowLoginModal} />
