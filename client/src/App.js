@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // Material
-import { CircularProgress } from "@material-ui/core/";
+import { CircularProgress, Typography } from "@material-ui/core/";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -126,7 +126,34 @@ function App() {
     </>
   );
 
-  const Loading = () => <div><CircularProgress /></div>;
+  const Loading = () => {
+    const [message, setMessage] = useState(0);
+    const messages = [
+      'Please wait',
+      'Log-in takes some time...',
+      'This will finish shortly, I promise'
+    ];
+
+    useEffect(() => {
+      let message = 0;
+      const updateMessage = () => {
+        setMessage(++message);
+        if (message === 2) clearInterval(interval);
+      };
+      const interval = setInterval(updateMessage, 5000);
+
+      return () => clearInterval(interval);;
+    }, []);
+
+    return (
+      <Box>
+        <Typography variant="h4">
+          {messages[message]}
+        </Typography>
+        <CircularProgress />
+      </Box>
+    );
+  };
 
   useEffect(getState, []);
 
