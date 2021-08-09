@@ -128,7 +128,7 @@ const Bot = {
     return selectSuccess;
   },
 
-  async loginComplete() {
+  async loginComplete(recall) {
     this.state = "initialized";
 
     try {
@@ -151,8 +151,9 @@ const Bot = {
 
       console.log("Game joined");
     } catch (e) {
-      console.log("Error happened at loginComplete", e);
-      return await this.loginComplete();
+      console.log("Error happened at loginComplete", recall, e);
+      if (recall) return;
+      await this.loginComplete(true);
     }
   },
 
