@@ -11,6 +11,7 @@ import Header from "./components/Header";
 import Login from "./components/Login";
 import LoginModal from "./components/LoginModal";
 import Resources from "./components/ResourcesTable";
+import LoginValidation from "./components/LoginValidation";
 
 import "./App.css";
 
@@ -84,6 +85,7 @@ function App() {
     const response = await fetch("/api/validate-login", options).then((res) =>
       res.json()
     );
+    
     if (response.success) {
       setLoginValidationImage(null);
       setState(response.state);
@@ -126,15 +128,6 @@ function App() {
 
   const Loading = () => <div><CircularProgress /></div>;
 
-  const LoginValidation = ({ screenshot }) => (
-    <div>
-      <img src={screenshot} />
-      {[1,2,3,4].map(n =>
-        <Button variant="contained" color="primary" onClick={() => validateLogin(n)}>{n}</Button>
-      )}
-    </div>
-  );
-
   useEffect(getState, []);
 
   useEffect(() => {
@@ -162,7 +155,9 @@ function App() {
 
           {/* Login validation */}
           {state === 'validating-login' && loginValidationImage &&
-            <LoginValidation screenshot={loginValidationImage} />
+            <LoginValidation
+              screenshot={loginValidationImage}
+              validateLogin={validateLogin} />
           }
 
           {/* Resources table */}
