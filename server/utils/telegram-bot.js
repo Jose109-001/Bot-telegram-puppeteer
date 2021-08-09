@@ -52,7 +52,7 @@ const TelegramBot = {
 
     // Initial commands
     bot.onText(/\/init/, this.ifNotInitialized(this.commands.init.bind(this)));
-    bot.onText(/\/start/, this.ifNotInitialized(this.commands.init.bind(this)));
+    bot.onText(/\/start/, this.commands.greetings.bind(this));
     bot.onText(/\/state/, this.commands.state.bind(this));
     bot.onText(/\/setchatid/, this.commands.setChatId.bind(this));
 
@@ -151,6 +151,10 @@ const TelegramBot = {
   },
 
   commands: {
+    async greetings(msg) {
+      this.bot.sendMessage(msg.chat.id, `Hello, ${msg.from.first_name}! You can run /init to initialize the bot`);
+    },
+
     async setChatId(msg) {
       const url = process.env.HEROKU_URL || "http://localhost:3001/";
       this.chatId = msg.chat.id;
