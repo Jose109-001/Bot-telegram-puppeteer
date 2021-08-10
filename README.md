@@ -3,6 +3,13 @@
 ## Heroku: https://telegram-puppeteer-bot.herokuapp.com/
 
  Project Slides:[Presentation Template - Pupeetter.odg](https://github.com/Jose109-001/Bot-telegram-puppeteer/files/6960903/Presentation.Template.-.Pupeetter.odg)
+ 
+ ### Open the Mobile app from browser: https://web.telegram.org/k/  and type / you can see all the comands
+### (after open the browser Select the GameBot not GameBot_Test)
+
+
+![page 11](https://user-images.githubusercontent.com/77666204/128853291-3980e284-de9b-4930-8079-3d5ccfe8f800.PNG)
+
 
 
 
@@ -79,10 +86,5 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ![page 10](https://user-images.githubusercontent.com/77666204/128853282-07b281cf-adae-471c-a190-81e0da1d7a88.PNG)
 
-### Open the Mobile app from browser: https://web.telegram.org/k/  and type / you can see all the comands
-### (after open the browser Select the GameBot not GameBot_Test)
-
-
-![page 11](https://user-images.githubusercontent.com/77666204/128853291-3980e284-de9b-4930-8079-3d5ccfe8f800.PNG)
 
 
