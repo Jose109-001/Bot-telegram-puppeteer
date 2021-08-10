@@ -5,7 +5,6 @@
  Project Slides:[Presentation Template - Pupeetter.odg](https://github.com/Jose109-001/Bot-telegram-puppeteer/files/6960903/Presentation.Template.-.Pupeetter.odg)
 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
