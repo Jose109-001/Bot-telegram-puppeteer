@@ -80,6 +80,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 ![page 10](https://user-images.githubusercontent.com/77666204/128853282-07b281cf-adae-471c-a190-81e0da1d7a88.PNG)
 
+Open the Mobile app from browser: https://web.telegram.org/k/
+
 ![page 11](https://user-images.githubusercontent.com/77666204/128853291-3980e284-de9b-4930-8079-3d5ccfe8f800.PNG)
 
 
