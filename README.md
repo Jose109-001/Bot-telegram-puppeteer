@@ -3,7 +3,7 @@
 ## Heroku: https://telegram-puppeteer-bot.herokuapp.com/
 
  Project Slides:[Presentation Template - Pupeetter.odg](https://github.com/Jose109-001/Bot-telegram-puppeteer/files/6960903/Presentation.Template.-.Pupeetter.odg)##  ### Open    
- #### the Heroku first after open the GameBot Browser
+ #### Open the Heroku first after open the GameBot Browser
  
  ### Open the Mobile app from browser: https://web.telegram.org/k/  and type / you can see all the comands
  ### (after open the browser Select the GameBot not GameBot_Test)
