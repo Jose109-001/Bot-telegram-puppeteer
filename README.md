@@ -7,6 +7,7 @@
  ### Open the Mobile app from browser: https://web.telegram.org/k/  and type / you can see all the comands
  ### (after open the browser Select the GameBot not GameBot_Test)
  ### Open the Heroku first after open the GameBot Browser
+ ### If you have the Telegram install on your mobile you can see this application just type:  (node_express_game_tests_bot)
 
 
 ![page 11](https://user-images.githubusercontent.com/77666204/128853291-3980e284-de9b-4930-8079-3d5ccfe8f800.PNG)
