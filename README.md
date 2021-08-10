@@ -1,7 +1,3 @@
-![page 8](https://user-images.githubusercontent.com/77666204/128853031-c065ff0c-8984-48bd-a605-90c4da3d729b.PNG)
-![page 10](https://user-images.githubusercontent.com/77666204/128853043-eeba51cd-2add-4cda-969b-6954d49e682e.PNG)
-![page 11](https://user-images.githubusercontent.com/77666204/128853048-cc98bea6-0f17-41df-984e-e9d70a332dc9.PNG)
-
 # Getting Started with Create React App
 
 ## Heroku: https://telegram-puppeteer-bot.herokuapp.com/
@@ -79,4 +75,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
 
 ![Page1](https://user-images.githubusercontent.com/77666204/128827521-f6e8ce71-cadd-4f4a-9109-c1453eed083d.PNG)
+
+![image](https://user-images.githubusercontent.com/77666204/128853165-a201b57e-7562-403f-ac3d-6eb2e8a1494f.png)
+
 
