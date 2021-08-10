@@ -9,7 +9,7 @@
  ### Open the Heroku first after open the GameBot Browser
  ## If you have the Telegram install on your mobile you can see this application just type:  node_express_game_tests_bot
  
- (Sometimes we need to refresh the page because Heroku take long time to open)
+🤦‍♂️ Sometimes we need to refresh the page because Heroku take long time to open.
 
 
 ![page 11](https://user-images.githubusercontent.com/77666204/128853291-3980e284-de9b-4930-8079-3d5ccfe8f800.PNG)
