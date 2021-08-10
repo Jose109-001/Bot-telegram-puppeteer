@@ -24,11 +24,36 @@ const getPostConfig = (body) => ({
 });
 
 function App() {
-  const [state, setState] = useState("loading");
+  const [error, setError] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState();
+  const [state, setState] = useState(""); // loading
   const [data, setData] = useState();
   const [image, setImage] = useState();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginValidationImage, setLoginValidationImage] = useState();
+
+  async function login (username, password) {
+    const response = await fetch('/users/authenticate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username,
+        password
+      }),
+    }).then(res => res.json());
+
+    if (!response.error) {
+      setIsLoggedIn(true);
+      getState();
+    }
+
+    setError(error => ({
+      ...error,
+      login: response.error
+    }));
+  }
 
   const handleResponseState = async (res) => {
     const response = await res.json();
@@ -155,7 +180,22 @@ function App() {
     );
   };
 
-  useEffect(getState, []);
+  async function getLoggedIn () {
+    const { auth } = await fetch('/users/isLoggedIn').then(res => res.json());
+    return auth;
+  }
+
+  useEffect(() => {
+    (async () => {
+      const loggedIn = await getLoggedIn();
+      
+      setIsLoggedIn(loggedIn);
+
+      if (loggedIn) {
+        getState();
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (state === "initialized") {
@@ -172,7 +212,7 @@ function App() {
         <Box m={2}>
           {/* Init button */}
           {state === "iddle" &&
-            <Login initBot={initBot} />
+            <Login type="bot-init" onSubmit={(user, pass) => initBot(user, pass)} />
           }
 
           {/* Loading message  */}
@@ -191,6 +231,12 @@ function App() {
           {state === "initialized" && data &&
             <Dashboard />
           }
+
+          {isLoggedIn === false && (
+            <Box>
+              <Login type="auth" onSubmit={(user, pass) => login(user, pass)} error={error.login} />
+            </Box>
+          )}
         </Box>
       </Container>
       <LoginModal show={showLoginModal} setShow={setShowLoginModal} />
