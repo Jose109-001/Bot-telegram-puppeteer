@@ -1,6 +1,6 @@
 # Getting Started with Create React App
 
-# Heroku: https://telegram-puppeteer-bot.herokuapp.com/
+## Heroku: https://telegram-puppeteer-bot.herokuapp.com/
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
